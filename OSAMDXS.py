@@ -1,11 +1,13 @@
 
-from re import I
+import random
 
 
 class Game:
     def __init__(self):
         self.board = Board()
         self.count =0
+        self.players = [AIPlayer(self.board), Humanplayer(self.board)]
+        
     def display(self):
         self.board.printBoard()
     def play(self):
@@ -20,7 +22,7 @@ class Game:
             else :
                 OorX="O"
             print(" {0}'s Move".format(OorX))
-            pos=self.move()
+            pos=self.players[self.count % 2].move()
             self.board.update(OorX,pos)
             
             self.board.printBoard()
@@ -34,14 +36,7 @@ class Game:
         if winCode == 3 :
             print("Draw")
            
-    def move(self):
-        while True:
-            
-            print("Please enter a valid position to move to")
-            pos = int(input());
-            if pos>0 and pos<10 and not(self.board.getValuePos(pos)=="X" or self.board.getValuePos(pos)=="O") :
-                break
-        return pos-1
+    
             
             
             
@@ -62,7 +57,7 @@ class Board:
     def update(self,counter,pos):
         self.board[pos]=counter
     def getValuePos(self,p):
-        return self.board[p]
+        return self.board[p-1]
     def checkwin(self,OorX):
         win_code=4
         draw_count =0
@@ -78,7 +73,37 @@ class Board:
         if draw_count ==9:
             winCode = 3
         return win_code
+    
+class Player :
+     def move(self):
+        raise NotImplementedError("Subclass must implement this method")
+    
+class Humanplayer:
+    def __init__(self, b):
+        self.board =b 
+    def move(self):
+        while True:
             
+            print("Please enter a valid position to move to")
+            pos = int(input());
+            if pos>0 and pos<10 and not(self.board.getValuePos(pos)=="X" or self.board.getValuePos(pos)=="O") :
+                break
+        return pos-1
+    
+class AIPlayer:
+     def __init__(self, b):
+        self.board =b
+     def move(self):
+       
+         while True:
+            
+            pos = random.randrange(1,10);
+            if pos>0 and pos<10 and not(self.board.getValuePos(pos)=="X" or self.board.getValuePos(pos)=="O") :
+                break
+         return pos-1
+        
+
+         
             
            
             
