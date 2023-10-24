@@ -3,19 +3,22 @@ import random
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, mode):
         self.board = Board()
         self.count =0
-        self.players = [AIPlayer(self.board), Humanplayer(self.board)]
+        if mode ==1:
+            self.players = [AIPlayer(self.board), Humanplayer(self.board)]
+        else:
+            self.players = [Humanplayer(self.board), Humanplayer(self.board)]
         
     def display(self):
         self.board.printBoard()
     def play(self):
-        winCode =4
+        winCode =STILL_PLAYING
         count=0
         self.board.printBoard()
         
-        while(winCode==4):
+        while(winCode==STILL_PLAYING):
            
             if self.count % 2 ==0: 
                 OorX ="X"
@@ -28,12 +31,12 @@ class Game:
             self.board.printBoard()
             winCode=self.board.checkwin(OorX)
             self.count=self.count+1
-        if winCode == 1 :
+        if winCode == XS_WIN :
             print("Xs Win")
           
-        if winCode == 2 :
+        if winCode == OS_WIN :
             print("Os Win")
-        if winCode == 3 :
+        if winCode == DRAW :
             print("Draw")
            
     
@@ -59,21 +62,23 @@ class Board:
     def getValuePos(self,p):
         return self.board[p-1]
     def checkwin(self,OorX):
-        win_code=4
+        win_code= STILL_PLAYING
         draw_count =0
         if OorX=="X":
-           winCode = 1
+           winCode = XS_WIN
         else:
-            winCode =2
+            winCode =OS_WIN
         for x in range(0,8):
             if self.board[self.winnerlines[x][0]]==OorX and self.board[self.winnerlines[x][1]]==OorX and self.board[self.winnerlines[x][2]]==OorX:
                 return winCode
             if self.board[x]==" " :
                 draw_count=draw_count +1
         if draw_count ==9:
-            winCode = 3
+            winCode = DRAW
         return win_code
-    
+# polymorphism - data types must hold references to objects - no abstract classes as such
+# 
+# use super().__init__(param1,param2)    to call super class constructor
 class Player :
      def move(self):
         raise NotImplementedError("Subclass must implement this method")
@@ -103,11 +108,13 @@ class AIPlayer:
          return pos-1
         
 
-         
+ # constants for game status - no const keyword in python        
+XS_WIN = 1
+OS_WIN =2
+DRAW = 3
+STILL_PLAYING = 4          
             
-           
-            
-g = Game()
+g = Game(1)
 g.play()
         
         
