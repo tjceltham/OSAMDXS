@@ -1,6 +1,8 @@
 
 import random
-
+import re
+import tkinter as tk
+from tkinter import ttk
 
 class Game:
     def __init__(self, mode):
@@ -13,6 +15,9 @@ class Game:
         
     def display(self):
         self.board.printBoard()
+        
+    def get_value_at_pos(self,pos):
+        return self.board.getValuePos(pos)
     def play(self):
         winCode =STILL_PLAYING
         count=0
@@ -38,6 +43,15 @@ class Game:
             print("Os Win")
         if winCode == DRAW :
             print("Draw")
+    
+    def move(self,pos):
+        if(self.count %  2 ==0):
+            self.board.update("X",pos)
+        else:
+            self.board.update("O",pos)
+        self.count=self.count+1
+            
+            
            
     
             
@@ -58,7 +72,7 @@ class Board:
                 print(self.board[x*3+y],end="")
             print("",end="\n")
     def update(self,counter,pos):
-        self.board[pos]=counter
+        self.board[pos-1]=counter
     def getValuePos(self,p):
         return self.board[p-1]
     def checkwin(self,OorX):
@@ -106,15 +120,119 @@ class AIPlayer:
             if pos>0 and pos<10 and not(self.board.getValuePos(pos)=="X" or self.board.getValuePos(pos)=="O") :
                 break
          return pos-1
+ 
+class Controller:
+    def __init__(self, model, view):
+        self.model = model
+        self.view = view
+   
+    def move(self,pos):
+        print(pos)
+        self.model.move(pos)
+        self.view.set_board_pos(self.model.get_value_at_pos(pos),pos)
+        
+        
+    def start(self):
+        print("Start Game")
+        
+        
+        
+class View(ttk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        # create widgets
+        # label
+        self.label = ttk.Label(self, text='Os and Xs')
+        self.label.grid(row=1, column=2)  
+        
+        self.start_button = ttk.Button(self, text='Start', command= self.start_button_clicked)
+        self.start_button.grid(row=2, column=1, padx=10)
+        
+        self.move_button1 = ttk.Button(self, text='1', command=lambda: self.move_button_clicked(1))
+        self.move_button1.grid(row=3, column=1, padx=10)
+        
+        self.move_button2 = ttk.Button(self, text='2', command=lambda: self.move_button_clicked(2))
+        self.move_button2.grid(row=3, column=2, padx=10)
+        
+        self.move_button3 = ttk.Button(self, text='3', command=lambda: self.move_button_clicked(3))
+        self.move_button3.grid(row=3, column=3, padx=10)
+        
+        self.move_button4 = ttk.Button(self, text='4', command=lambda: self.move_button_clicked(4))
+        self.move_button4.grid(row=4, column=1, padx=10)
+        
+        self.move_button5 = ttk.Button(self, text='5', command=lambda: self.move_button_clicked(5))
+        self.move_button5.grid(row=4, column=2, padx=10)
+        
+        self.move_button6 = ttk.Button(self, text='6', command=lambda: self.move_button_clicked(6))
+        self.move_button6.grid(row=4, column=3, padx=10)
+        
+        self.move_button7 = ttk.Button(self, text='7', command=lambda: self.move_button_clicked(7))
+        self.move_button7.grid(row=5, column=1, padx=10)
+        
+        self.move_button8 = ttk.Button(self, text='8', command=lambda: self.move_button_clicked(8))
+        self.move_button8.grid(row=5, column=2, padx=10)
+        
+        self.move_button9 = ttk.Button(self, text='9', command=lambda: self.move_button_clicked(9))
+        self.move_button9.grid(row=5, column=3, padx=10)
+        
+        self.board=[self.move_button1,self.move_button2,self.move_button3,self.move_button4,self.move_button5,self.move_button6,self.move_button7,self.move_button8,self.move_button9]
+
+        self.controller=None
         
 
- # constants for game status - no const keyword in python        
+        
+    def start_button_clicked(self):
+        self.controller.start()
+        
+    def move_button_clicked(self,pos):
+        self.controller.move(pos)
+        
+    def set_board_pos(self,counter,pos):
+        print(counter)
+        print(pos)
+       # btnMyButton["text"] = "Im not button"
+        self.board[pos-1]["text"]= counter
+                                
+          
+    def set_controller(self, controller):
+        """
+        Set the controller
+        :param controller:
+        :return:
+        """
+        self.controller = controller
+        
+class App(tk.Tk):
+    def __init__(self):
+        super().__init__()
+
+        self.title('Tkinter MVC Demo')
+
+        # create a model
+        model = Game(2)
+
+        # create a view and place it on the root window
+        view = View(self)
+        view.grid(row=0, column=0, padx=10, pady=10)
+
+        # create a controller
+        controller = Controller(model, view)
+
+        # set the controller to view
+        view.set_controller(controller)
+
+# constants for game status - no const keyword in python 
 XS_WIN = 1
 OS_WIN =2
 DRAW = 3
-STILL_PLAYING = 4          
+STILL_PLAYING = 4 
+if __name__ == '__main__':
+    app = App()
+    app.mainloop()  
+
+        
+         
             
-g = Game(1)
-g.play()
         
         
