@@ -16,6 +16,9 @@ class Game:
     def display(self):
         self.board.printBoard()
         
+    def get_game_state(self):
+        return self.board.checkwin()
+        
     def get_value_at_pos(self,pos):
         return self.board.getValuePos(pos)
     def play(self):
@@ -75,20 +78,26 @@ class Board:
         self.board[pos-1]=counter
     def getValuePos(self,p):
         return self.board[p-1]
-    def checkwin(self,OorX):
+    def checkwin(self):
+        OorX =["X","O"]
         win_code= STILL_PLAYING
         draw_count =0
-        if OorX=="X":
-           winCode = XS_WIN
-        else:
-            winCode =OS_WIN
-        for x in range(0,8):
-            if self.board[self.winnerlines[x][0]]==OorX and self.board[self.winnerlines[x][1]]==OorX and self.board[self.winnerlines[x][2]]==OorX:
-                return winCode
-            if self.board[x]==" " :
-                draw_count=draw_count +1
-        if draw_count ==9:
-            winCode = DRAW
+        
+        for x in range(0,9):
+            if(self.board[x]=="X" or self.board[x]=="O"):
+                draw_count=draw_count+1
+            if (draw_count ==9):
+                return DRAW
+        
+            
+        for counter in OorX:
+            for x in range(0,8):
+                if self.board[self.winnerlines[x][0]]==counter and self.board[self.winnerlines[x][1]]==counter and self.board[self.winnerlines[x][2]]==counter:
+                    if counter == "X":
+                        win_code=XS_WIN
+                    else:
+                        win_code=OS_WIN
+                
         return win_code
 # polymorphism - data types must hold references to objects - no abstract classes as such
 # 
@@ -130,6 +139,13 @@ class Controller:
         print(pos)
         self.model.move(pos)
         self.view.set_board_pos(self.model.get_value_at_pos(pos),pos)
+        win_state =self.model.get_game_state()
+        if( win_state == OS_WIN):
+            print("Os Win")
+        if( win_state == XS_WIN):
+            print("Xs Win")
+        if(win_state == DRAW):
+            print ("DRAW")
         
         
     def start(self):
