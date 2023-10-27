@@ -4,6 +4,8 @@ import re
 import tkinter as tk
 from tkinter import ttk
 
+import datetime
+
 class Game:
     def __init__(self, mode):
         self.board = Board()
@@ -134,6 +136,7 @@ class Controller:
     def __init__(self, model, view):
         self.model = model
         self.view = view
+        self.clock()
    
     def move(self,pos):
         print(pos)
@@ -150,6 +153,17 @@ class Controller:
         
     def start(self):
         print("Start Game")
+    def update_ui(self):
+        print("update UI")
+    
+    def clock(self):
+        time = datetime.datetime.now().strftime("Time: %H:%M:%S")
+        self.update_ui()
+            
+        self.view.after(1000, self.clock) 
+    
+   
+
         
         
         
@@ -222,9 +236,8 @@ class View(ttk.Frame):
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-
+       # self.root =tk.Tk()
         self.title('Tkinter MVC Demo')
-
         # create a model
         model = Game(2)
 
@@ -237,6 +250,8 @@ class App(tk.Tk):
 
         # set the controller to view
         view.set_controller(controller)
+            
+     
 
 # constants for game status - no const keyword in python 
 XS_WIN = 1
